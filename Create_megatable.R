@@ -2,9 +2,9 @@
 
 # load data ---------------------------------------------------------------
 
-data_meta <- read.csv(url("https://raw.githubusercontent.com/embodied-computation-group/metagen/main/data/metacognition_TrialData_master.csv?token=GHSAT0AAAAAABYZ3QKM5TFM7MEPFWSKDGGCYZWZGJA"))
-sb_pre <- read.table(url("https://raw.githubusercontent.com/embodied-computation-group/metagen/main/data/self_belief_pre_labels.csv?token=GHSAT0AAAAAABYZ3QKMHVEM6I5WGASWK2Y6YZWX3DA"), sep = ";", header = T)
-sb_post <- read.table(url("https://raw.githubusercontent.com/embodied-computation-group/metagen/main/data/self_belief_post_labels.csv?token=GHSAT0AAAAAABYZ3QKME4CCBY6FDER4SDNAYZWX3TA"), sep = ";", header = T)
+data_meta <- read.csv(file.choose(),header = T) #select metacognition_TrialData_master
+sb_pre <- read.table(file.choose(), sep = ";", header = T) #select self_belief_pre_labels
+sb_post <- read.table(file.choose(), sep = ";", header = T) #select self_belief_post_labels
 
 
 # For self belief data ----------------------------------------------------
@@ -37,21 +37,21 @@ metaf <- data_meta[,c(1, 2, 6:8)]
 colnames(metaf) <- c("subj", "mod", "acc", "conf", "rt")
 
 # congregate scores to fit other dataset
-metaw <- as.data.frame(matrix(nrow = 329, ncol = 14))
-colnames(metaw) <- c("subj", "gender", "mem_acc", "mem_conf", "mem_rt", "vis_acc", "vis_conf", "vis_rt", "gdp_acc", "gdp_conf", "gdp_rt", "cal_acc", "cal_conf", "cal_rt")
+metaw <- as.data.frame(matrix(nrow = 329, ncol = 13))
+colnames(metaw) <- c("subj", "mem_acc", "mem_conf", "mem_rt", "vis_acc", "vis_conf", "vis_rt", "gdp_acc", "gdp_conf", "gdp_rt", "cal_acc", "cal_conf", "cal_rt")
 
 # loop over all subjects - TAKES A WHILE TO RUN
 for (i in metaf$subj){
   submeta <- metaf[metaf$subj == i,2:5]
   metaw[i,1] <- i
-  metaw[i,3] <- mean(submeta[submeta$mod == 'memory', 'acc'], na.rm =T)
-  metaw[i,4] <- mean(submeta[submeta$mod == 'memory', 'conf'], na.rm =T)
-  metaw[i,5] <- mean(submeta[submeta$mod == 'memory', 'rt'], na.rm =T)
-  metaw[i,6] <- mean(submeta[submeta$mod == 'vision', 'acc'], na.rm =T)
-  metaw[i,7] <- mean(submeta[submeta$mod == 'vision', 'conf'], na.rm =T)
-  metaw[i,8] <- mean(submeta[submeta$mod == 'vision', 'rt'], na.rm =T)
-  metaw[i,9] <- mean(submeta[submeta$mod == 'GDP', 'acc'], na.rm =T)
-  metaw[i,10] <- mean(submeta[submeta$mod == 'GDP', 'conf'], na.rm =T)
+  metaw[i,2] <- mean(submeta[submeta$mod == 'memory', 'acc'], na.rm =T)
+  metaw[i,3] <- mean(submeta[submeta$mod == 'memory', 'conf'], na.rm =T)
+  metaw[i,4] <- mean(submeta[submeta$mod == 'memory', 'rt'], na.rm =T)
+  metaw[i,5] <- mean(submeta[submeta$mod == 'vision', 'acc'], na.rm =T)
+  metaw[i,6] <- mean(submeta[submeta$mod == 'vision', 'conf'], na.rm =T)
+  metaw[i,7] <- mean(submeta[submeta$mod == 'vision', 'rt'], na.rm =T)
+  metaw[i,8] <- mean(submeta[submeta$mod == 'GDP', 'acc'], na.rm =T)
+  metaw[i,9] <- mean(submeta[submeta$mod == 'GDP', 'conf'], na.rm =T)
   metaw[i,10] <- mean(submeta[submeta$mod == 'GDP', 'rt'], na.rm =T)
   metaw[i,11] <- mean(submeta[submeta$mod == 'Calories', 'acc'], na.rm =T)
   metaw[i,12] <- mean(submeta[submeta$mod == 'Calories', 'conf'], na.rm =T)
