@@ -40,7 +40,7 @@ colnames(metaf) <- c("subj", "mod", "acc", "conf", "rt")
 metaw <- as.data.frame(matrix(nrow = 329, ncol = 13))
 colnames(metaw) <- c("subj", "mem_acc", "mem_conf", "mem_rt", "vis_acc", "vis_conf", "vis_rt", "gdp_acc", "gdp_conf", "gdp_rt", "cal_acc", "cal_conf", "cal_rt")
 
-# loop over all subjects - TAKES A WHILE TO RUN
+# loop over all subjects - TAKES A WHILE TO RUN > MAKE MORE EFFICIENT!
 for (i in metaf$subj){
   submeta <- metaf[metaf$subj == i,2:5]
   metaw[i,1] <- i
@@ -64,7 +64,10 @@ for (i in metaf$subj){
 all_data <- full_join(selfbel, metaw, by = "subj")
 
 #delete non-binary person
-all_data <- all_data[all_data$gender!="non-binary",]
+all_data <- filter(all_data, gender!="non-binary")
+
+#delete non-sub
+all_data <- filter(all_data, subj!=996)
 
 #delete na
 all_data <- na.omit(all_data)
@@ -74,3 +77,6 @@ all_data <- cbind(all_data, rowMeans(subset(all_data, select = c("mem_acc", "vis
 all_data <- cbind(all_data, rowMeans(subset(all_data, select = c("mem_conf", "vis_conf", "gdp_conf", "cal_conf"))))
 all_data <- cbind(all_data, rowMeans(subset(all_data, select = c("mem_rt", "vis_rt", "gdp_rt", "cal_rt"))))
 colnames(all_data)[25:27] <- c("avg_acc", "avg_conf", "avg_rt")
+
+# save megatable as csv
+write.csv(all_data, file = "megatable.csv")
