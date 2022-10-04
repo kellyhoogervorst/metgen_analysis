@@ -36,3 +36,37 @@ eff_long <- gather(mod_eff, key="T1", value="measurement", mem_acc:cal_conf, fac
 # visualise interaction effect
 ggplot(data = eff_long, aes(x = T1, y = measurement, col = gender))+
   geom_boxplot() 
+
+
+# statistical testing -----------------------------------------------------
+# two outcome variables, continuous, two predictive variables, discrete
+# factorial manova
+
+# first, testing of assumptions -------------------------------------------
+# shapiro for normal distribution
+shap_p <- as.data.frame(matrix(nrow =1, ncol = 16))
+#colnames(shap_p) <- cbind("F", "M")
+
+shap_p[1] <- shapiro.test(all_data$mem_acc[all_data$gender == "Feminin"])$p.value
+shap_p[2] <- shapiro.test(all_data$mem_acc[all_data$gender == "Masculin"])$p.value
+shap_p[3] <- shapiro.test(all_data$mem_conf[all_data$gender == "Feminin"])$p.value
+shap_p[4] <- shapiro.test(all_data$mem_conf[all_data$gender == "Masculin"])$p.value
+shap_p[5] <- shapiro.test(all_data$vis_acc[all_data$gender == "Feminin"])$p.value
+shap_p[6] <- shapiro.test(all_data$vis_acc[all_data$gender == "Masculin"])$p.value
+shap_p[7] <- shapiro.test(all_data$vis_conf[all_data$gender == "Feminin"])$p.value
+shap_p[8] <- shapiro.test(all_data$vis_conf[all_data$gender == "Masculin"])$p.value
+shap_p[9] <- shapiro.test(all_data$gdp_acc[all_data$gender == "Feminin"])$p.value
+shap_p[10] <- shapiro.test(all_data$gdp_acc[all_data$gender == "Masculin"])$p.value
+shap_p[11] <- shapiro.test(all_data$gdp_conf[all_data$gender == "Feminin"])$p.value
+shap_p[12] <- shapiro.test(all_data$gdp_conf[all_data$gender == "Masculin"])$p.value
+shap_p[13] <- shapiro.test(all_data$cal_acc[all_data$gender == "Feminin"])$p.value
+shap_p[14] <- shapiro.test(all_data$cal_acc[all_data$gender == "Masculin"])$p.value
+shap_p[15] <- shapiro.test(all_data$cal_conf[all_data$gender == "Feminin"])$p.value
+shap_p[16] <- shapiro.test(all_data$cal_conf[all_data$gender == "Masculin"])$p.value
+
+# definitely some significant
+
+# do the manova
+#attach(all_data)
+man <- manova(cbind(mem_acc, mem_conf, vis_acc, vis_conf, gdp_acc, gdp_conf, cal_acc, cal_conf) ~ gender, data = all_data)
+summary(man) # is significant
