@@ -74,22 +74,21 @@ summary(man) # is significant
 
 # make new dataset
 library(tidyr)
+library(scales)
+library(ggplot2)
 
 inter <- as.data.frame(cbind(all_data$gender, all_data$avg_acc, all_data$avg_conf), header = T)
 colnames(inter) <- c("gender", "acc", "conf")
 
 # scale variables
-
+inter[, 2:3] <- as.numeric(unlist(inter[, 2:3])) # because numbers were characters
+scale_conf <- rescale(inter$conf)
+inter <- cbind(inter, scale_conf)
+inter <- inter[, cbind(1, 2, 4)]
 
 # into long format
-inter_long <- gather(inter, T1, measurement, acc:conf, factor_key=TRUE)
-inter_long[, 3] <- as.numeric(unlist(inter_long[, 3])) # because numbers were integers
+inter_long <- gather(inter, key="T1", value="measurement", acc:scale_conf, factor_key=TRUE)
 
 # visualise interaction effect
-inter_long %>% 
-  ggplot() +
-  aes(x = T1, color = gender, group = gender, y = measurement) +
-  scale_y_continuous("accuracy", limits = c(0,1), sec.axis = sec_axis(~ . * 7, name = "Confidence"))
-  stat_summary(fun.y = mean, geom = "point") +
-  stat_summary(fun.y = mean, geom = "line")
-
+ggplot(data = inter_long, aes(x = T1, y = measurement, col = gender))+
+  geom_boxplot()
