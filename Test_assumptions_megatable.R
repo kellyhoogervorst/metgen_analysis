@@ -50,4 +50,46 @@ wilcox.test(all_data$avg_rt ~ all_data$gender)
 
 # plot respective data ----------------------------------------------------
 library(ggplot2)
+library(gridExtra)
+
+# accuracy
+accplot <- ggplot(all_data, aes(x=gender, y=avg_acc, fill=gender)) +
+  geom_violin(width=0.4) +
+  labs(title="Average accuracy per gender", y="Accuracy", x="Gender") +
+  theme(legend.position="none", plot.title=element_text(size=11))
+
+# confidence
+confplot <- ggplot(all_data, aes(x=gender, y=avg_conf, fill=gender)) +
+  geom_violin(width=0.4) +
+  labs(title="Average confidence per gender", y="Confidence score", x="Gender")+
+  theme(legend.position="none", plot.title=element_text(size=11))
+
+grid.arrange(accplot, confplot, nrow=1, ncol=2)
+
+
+# Perform MANOVA to see interaction effect --------------------------------
+
+man <- manova(cbind(avg_acc, avg_conf) ~ gender, data = all_data)
+summary(man) # is significant
+
+# make new dataset
+library(tidyr)
+
+inter <- as.data.frame(cbind(all_data$gender, all_data$avg_acc, all_data$avg_conf), header = T)
+colnames(inter) <- c("gender", "acc", "conf")
+
+# scale variables
+
+
+# into long format
+inter_long <- gather(inter, T1, measurement, acc:conf, factor_key=TRUE)
+inter_long[, 3] <- as.numeric(unlist(inter_long[, 3])) # because numbers were integers
+
+# visualise interaction effect
+inter_long %>% 
+  ggplot() +
+  aes(x = T1, color = gender, group = gender, y = measurement) +
+  scale_y_continuous("accuracy", limits = c(0,1), sec.axis = sec_axis(~ . * 7, name = "Confidence"))
+  stat_summary(fun.y = mean, geom = "point") +
+  stat_summary(fun.y = mean, geom = "line")
 
