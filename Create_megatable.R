@@ -24,7 +24,7 @@ colnames(postf) <- c("subj", "mem_post", "vis_post", "gdp_post", "cal_post")
 postf[, c(1:5)] <- as.numeric(unlist(postf[, c(1:5)])) # because numbers were integers
 
 #merge the two sets
-selfbel <- merge(pref, postf, by="subj")
+selfbel <- inner_join(pref, postf, by="subj")
 
 
 #calculate and add average pre and post scores
@@ -61,13 +61,17 @@ for (i in metaf$subj){
 
 # combine the two sets ----------------------------------------------------
 
-all_data <- full_join(selfbel, metaw, by = "subj")
+all_data <- inner_join(selfbel, metaw, by = "subj")
 
 #delete non-binary person
 all_data <- filter(all_data, gender!="non-binary")
 
 #delete non-sub
 all_data <- filter(all_data, subj!=996)
+
+#delete duplicates
+all_data = cbind(all_data, duplicated(all_data$subj))
+all_data <- filter(all_data, all_data[,28]!=TRUE)
 
 #delete na
 all_data <- na.omit(all_data)
