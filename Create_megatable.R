@@ -85,7 +85,7 @@ all_data <- cbind(all_data, rowMeans(subset(all_data, select = c("mem_1", "vis_1
 
 all_data <- cbind(all_data, rowMeans(subset(all_data[,14:21])))
 
-colnames(all_data[,22:28]) <- cbind( "avg_mem", "avg_vis", "avg_gdp", "avg_cal", "avg_0", "avg_1", "avg_trial")
+colnames(all_data)[22:28] <- cbind( "avg_mem", "avg_vis", "avg_gdp", "avg_cal", "avg_0", "avg_1", "avg_trial")
 
 # save megatable as csv
 write.csv(all_data, file = "megatable.csv")

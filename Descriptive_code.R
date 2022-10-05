@@ -1,23 +1,17 @@
 # descriptive statistics
-nums <- as.data.frame(meta$subj)
-colnames(nums) <- "Sid"
-desc <- inner_join(nums, sb_pre[,2:4], by = "Sid")
 
-dup <- duplicated(desc)
-desc <- cbind(desc, dup)
+# number of males vs. females
+table(all_data$gender)
 
-desc <- filter(desc, dup!=TRUE)
+# age information
+min(all_data$age)
+max(all_data$age)
 
-min(desc$age)
-max(desc$age)
+mean(all_data$age[all_data$gender == "Masculin"])
+mean(all_data$age[all_data$gender == "Feminin"])
 
-mean(desc$age[desc$gender == "Masculin"])
-mean(desc$age[desc$gender == "Feminin"])
+sd(all_data$age[all_data$gender == "Masculin"])
+sd(all_data$age[all_data$gender == "Feminin"])
 
-sd(desc$age[desc$gender == "Masculin"])
-sd(desc$age[desc$gender == "Feminin"])
 
-hist(desc$age[desc$gender == "Masculin"])
-hist(desc$age[desc$gender == "Feminin"])
 
-sum(duplicated(all_data$subj))
