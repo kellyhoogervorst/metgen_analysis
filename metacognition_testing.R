@@ -2,12 +2,13 @@
 
 # converting the accuracy data
 library(tidyr)
+library(dplyr)
 
 # mean confidence 
 trial_conf <- data_meta[,c(1, 2, 6, 7)]
 trial_conf <- trial_conf %>%
-  group_by(subject, modality, accuracy) %>%
-  summarise(mean(confidence, na.rm=T))
+  group_by(subj, mod, acc) %>%
+  summarise(mean(conf, na.rm=T))
 colnames(trial_conf) <- cbind("subj", "mod", "acc", "conf")
 
 # rescale trial data
