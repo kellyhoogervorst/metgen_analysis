@@ -68,8 +68,7 @@ all_data <- inner_join(selfbel, trialf, by = "subj")
 all_data <- filter(all_data, gender!="non-binary")
 
 # check duplicates
-all_data = cbind(all_data, duplicated(all_data$subj))
-all_data <- filter(all_data, all_data[,28]!=TRUE)
+sum(duplicated(all_data$subj))
 
 #delete na
 all_data <- na.omit(all_data)
@@ -89,3 +88,6 @@ colnames(all_data)[22:28] <- cbind( "avg_mem", "avg_vis", "avg_gdp", "avg_cal", 
 
 # save megatable as csv
 write.csv(all_data, file = "megatable.csv")
+
+# clear environment
+rm(list = ls())

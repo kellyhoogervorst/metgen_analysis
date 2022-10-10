@@ -1,17 +1,22 @@
-# descriptive statistics
+
+# Descriptive statistics --------------------------------------------------
+
+# load in megatable
+megatable <- read.csv(file.choose(),header = T) #select megatable
+
 
 # number of males vs. females
-table(all_data$gender)
+table(megatable$gender)
 
 # age information
-min(all_data$age)
-max(all_data$age)
+min(megatable$age)
+max(megatable$age)
 
-mean(all_data$age[all_data$gender == "Masculin"])
-mean(all_data$age[all_data$gender == "Feminin"])
+mean(megatable$age[megatable$gender == "Masculin"])
+mean(megatable$age[megatable$gender == "Feminin"])
 
-sd(all_data$age[all_data$gender == "Masculin"])
-sd(all_data$age[all_data$gender == "Feminin"])
+sd(megatable$age[megatable$gender == "Masculin"])
+sd(megatable$age[megatable$gender == "Feminin"])
 
 
 
