@@ -1,5 +1,5 @@
 # test general differences in sb or conf ----------------------------------
-# three seperate t-tests to check gender differences in self belief (pre and post) and trial confidence
+# three separate t-tests to check gender differences in self belief (pre and post) and trial confidence
 
 # check assumptions -------------------------------------------------------
 
