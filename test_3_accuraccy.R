@@ -64,8 +64,7 @@ ggplot(mega_acc, aes(x = mem_0, fill = gender)) +
 
 # start with average acc anovas -------------------------------------------
 
-# seperate three tests
-# pre values
+# seperate average scores
 long_avgacc <- mega_acc[,c(1,2, 15:16)]
 long_avgacc <- gather(long_avgacc, key="acc", value="conf", avg_0:avg_1)
 
@@ -113,4 +112,108 @@ ggplot(long_avgacc, aes(x = acc, y = conf, group = gender, col=gender))+
 
 # across different modalities ---------------------------------------------
 
+# separate modality specific scores
+long_acc <- mega_acc[,c(1:10)]
+long_acc <- gather(long_acc, key="acc", value="conf", cal_0:vis_1)
 
+# run anovas
+library(rstatix)
+
+acc.aov <- anova_test(data = long_acc, dv = conf, wid = subj, between = gender, within = acc)
+get_anova_table(acc.aov)
+
+# post hoc for accuracy
+acc.one <- long_acc %>%
+  group_by(acc) %>%
+  anova_test(dv = conf, wid = subj, between = gender) %>%
+  get_anova_table() %>%
+  adjust_pvalue(method = "bonferroni")
+acc.one
+
+# post hoc per modality
+mem.one <- long_mem %>%
+  group_by(acc) %>%
+  anova_test(dv = conf, wid = subj, between = gender) %>%
+  get_anova_table() %>%
+  adjust_pvalue(method = "bonferroni")
+mem.one
+
+
+# plot
+library(ggplot2)
+library(gridExtra)
+library(ggsignif)
+
+# split modalities for plotting
+long_mem <- mega_acc[,c(1,2,7,8)]
+long_mem <- gather(long_mem, key="acc", value="conf", mem_0:mem_1)
+
+long_vis <- mega_acc[,c(1,2,9,10)]
+long_vis <- gather(long_vis, key="acc", value="conf", vis_0:vis_1)
+
+long_gdp <- mega_acc[,c(1,2,5,6)]
+long_gdp <- gather(long_gdp, key="acc", value="conf", gdp_0:gdp_1)
+
+long_cal <- mega_acc[,c(1:4)]
+long_cal <- gather(long_cal, key="acc", value="conf", cal_0:cal_1)
+
+# now the real plotting
+
+membox <- ggplot(long_mem, aes(x=acc, y=conf, fill=gender)) +
+  geom_boxplot(notch = T, outlier.shape = NA) +
+  ylim(0, 8) +
+  labs(title="Average accuracy confidence for memory per gender", y="Confidence", x = "Accuracy") +
+  theme(legend.position="none") + 
+  geom_signif(y_position = 7, xmin = 0.8, xmax = 1.2, annotation = "**", tip_length = 0.01, textsize = 7, size = 0.5)
+
+visbox <- ggplot(long_vis, aes(x=acc, y=conf, fill=gender)) +
+  geom_boxplot(notch = T, outlier.shape = NA) +
+  ylim(0, 8) +
+  labs(title="Average accuracy confidence for vision per gender", y="Confidence", x = "Accuracy") +
+  theme(legend.position="none")
+
+gdpbox <- ggplot(long_gdp, aes(x=acc, y=conf, fill=gender)) +
+  geom_boxplot(notch = T, outlier.shape = NA) +
+  ylim(0, 8) +
+  labs(title="Average accuracy confidence for gdp per gender", y="Confidence", x = "Accuracy") +
+  theme(legend.position="none") + 
+  geom_signif(y_position = 7, xmin = c(0.8, 1.8), xmax = c(1.2, 2.2), annotation = c("***", "***"), tip_length = 0.01, textsize = 7, size = 0.5)
+
+calbox <- ggplot(long_cal, aes(x=acc, y=conf, fill=gender)) +
+  geom_boxplot(notch = T, outlier.shape = NA) +
+  ylim(0, 8) +
+  labs(title="Average accuracy confidence for calories per gender", y="Confidence", x = "Accuracy") +
+  theme(legend.position="none") 
+
+grid.arrange(membox, visbox, gdpbox, calbox, nrow=2, ncol=2, bottom = "Accuracy")
+
+# also plot interaction
+intmem <- ggplot(long_mem, aes(x = acc, y = conf, group = gender, col=gender))+
+  geom_point(shape=1, size = 2, position = position_dodge(width = 0.05)) +
+  geom_line() +
+  labs(title="Accuracy dependent memory confidence per gender", y="Confidence", x = "Accuracy") +
+  ylim(0, 8) +
+  geom_signif(y_position = 7, xmin = 1, xmax = 2, annotation = c("**"), tip_length = 0.01, textsize = 7, size = 0.5, col = "black")
+
+intvis <- ggplot(long_vis, aes(x = acc, y = conf, group = gender, col=gender))+
+  geom_point(shape=1, size = 2, position = position_dodge(width = 0.05)) +
+  geom_line() +
+  labs(title="Accuracy dependent vision confidence per gender", y="Confidence", x = "Accuracy") +
+  ylim(0, 8) +
+  geom_signif(y_position = 7, xmin = 1, xmax = 2, annotation = c("**"), tip_length = 0.01, textsize = 7, size = 0.5, col = "black")
+
+intgdp <- ggplot(long_gdp, aes(x = acc, y = conf, group = gender, col=gender))+
+  geom_point(shape=1, size = 2, position = position_dodge(width = 0.05)) +
+  geom_line() +
+  labs(title="Accuracy dependent gdp confidence per gender", y="Confidence", x = "Accuracy") +
+  ylim(0, 8) +
+  geom_signif(y_position = 7, xmin = 1, xmax = 2, annotation = c("**"), tip_length = 0.01, textsize = 7, size = 0.5, col = "black")
+
+intcal <- ggplot(long_cal, aes(x = acc, y = conf, group = gender, col=gender))+
+  geom_point(shape=1, size = 2, position = position_dodge(width = 0.05)) +
+  geom_line() +
+  labs(title="Accuracy dependent calorie confidence per gender", y="Confidence", x = "Accuracy") +
+  ylim(0, 8) +
+  geom_signif(y_position = 7, xmin = 1, xmax = 2, annotation = c("**"), tip_length = 0.01, textsize = 7, size = 0.5, col = "black")
+
+grid.arrange(intmem, intvis, intgdp, intcal, nrow=2, ncol=2, bottom = "Accuracy")
