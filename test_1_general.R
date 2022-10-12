@@ -59,18 +59,26 @@ library(ggpubr)
 preplot <- ggplot(megatable, aes(x=gender, y=avg_pre, fill=gender)) +
   geom_boxplot(notch = T, outlier.shape = NA) +
   labs(title="Average self belief before task per gender", y="Self belief pre") +
-  theme(legend.position="none", axis.title.x = element_blank()) 
+  theme(legend.position="none", axis.title.x = element_blank()) +
+  ylim(0,110) +
+  geom_signif(y_position = 100, xmin = 1, xmax = 2, annotation = "***", tip_length = 0.01, textsize = 7, size = 0.5)
 
 # post
 postplot <- ggplot(megatable, aes(x=gender, y=avg_post, fill=gender)) +
   geom_boxplot(notch = T, outlier.shape = NA) +
   labs(title="Average self belief after task per gender", y="Self belief post") +
-  theme(legend.position="none", axis.title.x = element_blank()) 
+  theme(legend.position="none", axis.title.x = element_blank()) +
+  ylim(0,110) +
+  geom_signif(y_position = 100, xmin = 1, xmax = 2, annotation = "***", tip_length = 0.01, textsize = 7, size = 0.5)
+
 
 # trial
 trialplot <- ggplot(megatable, aes(x=gender, y=avg_trial, fill=gender)) +
   geom_boxplot(notch = T, outlier.shape = NA) +
   labs(title="Average confidence during task per gender", y="During trial confidence") +
-  theme(legend.position="none", axis.title.x = element_blank()) 
+  theme(legend.position="none", axis.title.x = element_blank())  +
+  ylim(0,8) +
+  geom_signif(y_position = 7, xmin = 1, xmax = 2, annotation = "***", tip_length = 0.01, textsize = 7, size = 0.5)
+
 
 grid.arrange(preplot, postplot, trialplot, nrow=1, ncol=3, bottom = "Gender")
